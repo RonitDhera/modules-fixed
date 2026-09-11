@@ -39,4 +39,7 @@ export default defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
   },
+  admin: {
+    disable: true, // Yeh backend ko bolega ke admin ki fikar na kare
+  },
 })
