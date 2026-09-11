@@ -29,11 +29,11 @@ export default defineConfig({
     resolve: "./src/modules/google-integration", // new
   },  
 {
-  resolve: "@medusajs/medusa/auth",
+  resolve: "@medusajs/auth",
   options: {
     providers: [
       {
-        resolve: "@medusajs/medusa/auth-emailpass",
+        resolve: "@medusajs/auth-emailpass",
         id: "emailpass",
       },
     ],
