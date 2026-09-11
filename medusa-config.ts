@@ -26,19 +26,8 @@ export default defineConfig({
       resolve: "./src/modules/inventory-transfer",
     },
     {
-    resolve: "./src/modules/google-integration", // new
-  },  
-{
-  resolve: "@medusajs/auth",
-  options: {
-    providers: [
-      {
-        resolve: "@medusajs/auth-emailpass",
-        id: "emailpass",
-      },
-    ],
-  },
-}
+      resolve: "./src/modules/google-integration", // new
+    },
   ],
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL || required("DATABASE_URL"),
@@ -51,6 +40,10 @@ export default defineConfig({
     },
   },
   admin: {
-    disable: true, 
+    disable: false,
+    path: "/",
+    backendUrl:
+      process.env.MEDUSA_BACKEND_URL ||
+      "https://modules-fixed-production.up.railway.app",
   },
 })
