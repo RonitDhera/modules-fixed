@@ -40,6 +40,6 @@ export default defineConfig({
     },
   },
   admin: {
-    disable: true, // Yeh backend ko bolega ke admin ki fikar na kare
+    disable: true, 
   },
 })
