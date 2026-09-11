@@ -28,6 +28,17 @@ export default defineConfig({
     {
     resolve: "./src/modules/google-integration", // new
   },  
+{
+  resolve: "@medusajs/medusa/auth",
+  options: {
+    providers: [
+      {
+        resolve: "@medusajs/medusa/auth-emailpass",
+        id: "emailpass",
+      },
+    ],
+  },
+}
   ],
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL || required("DATABASE_URL"),
