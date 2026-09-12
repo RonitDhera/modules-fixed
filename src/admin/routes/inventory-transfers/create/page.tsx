@@ -122,7 +122,7 @@ const CreateInventoryTransferPage = () => {
       )
     }
 
-    window.location.href = `/app/inventory-transfers/${data.transfer.id}`
+    window.location.href = `/inventory-transfers/${data.transfer.id}`
   }
 
   const destinationOptions = locations.filter(
