@@ -28,6 +28,23 @@ export default defineConfig({
     {
       resolve: "./src/modules/google-integration", // new
     },
+    {
+      resolve: "@medusajs/medusa/file",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/file-local",
+            id: "local",
+            options: {
+              backend_url: `${
+                process.env.MEDUSA_BACKEND_URL ||
+                "https://modules-fixed-production.up.railway.app"
+              }/static`,
+            },
+          },
+        ],
+      },
+    },
   ],
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL || required("DATABASE_URL"),
