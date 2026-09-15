@@ -3,6 +3,8 @@ import { Container, Heading, Text, Table } from "@medusajs/ui"
 import { ChatBubbleLeftRight } from "@medusajs/icons"
 import { useEffect, useState } from "react"
 
+const BACKEND_URL = "https://modules-fixed-production.up.railway.app"
+
 const AnalyticsPage = () => {
   const [salesData, setSalesData] = useState<any>(null)
   const [topProducts, setTopProducts] = useState<any[]>([])
@@ -11,7 +13,7 @@ const AnalyticsPage = () => {
 
   useEffect(() => {
     // Step 1: get the current store's id first
-    fetch("/admin/stores", { credentials: "include" })
+    fetch(`${BACKEND_URL}/admin/stores`, { credentials: "include" })
       .then((res) => res.json())
       .then((storeRes) => {
         const store_id = storeRes?.stores?.[0]?.id
@@ -23,9 +25,9 @@ const AnalyticsPage = () => {
 
         // Step 2: now call the three analytics endpoints with store_id
         Promise.all([
-          fetch(`/admin/analytics/sales?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
-          fetch(`/admin/analytics/products/top?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
-          fetch(`/admin/analytics/inventory/low-stock?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
+          fetch(`${BACKEND_URL}/admin/analytics/sales?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
+          fetch(`${BACKEND_URL}/admin/analytics/products/top?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
+          fetch(`${BACKEND_URL}/admin/analytics/inventory/low-stock?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
         ])
           .then(([sales, products, lowStock]) => {
             setSalesData(sales)
