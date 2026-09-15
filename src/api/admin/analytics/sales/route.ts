@@ -12,14 +12,18 @@ export async function GET(
   const { from, to } = req.query
 
   try {
-    // Fetching orders using Medusa v2 Query tool
+    // Fetching orders with summary fields in Medusa v2
     const { data: orders } = await query.graph({
       entity: "order",
-      fields: ["id", "total", "created_at"],
+      fields: ["id", "created_at", "summary.*"],
     })
 
-    // Calculate total revenue and order count
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0)
+    // Calculate total revenue from summary.total and order count
+    const totalRevenue = orders.reduce((sum: number, order: any) => {
+      const orderTotal = order.summary?.total ?? order.total ?? 0
+      return sum + orderTotal
+    }, 0)
+    
     const ordersCount = orders.length
 
     res.json({
