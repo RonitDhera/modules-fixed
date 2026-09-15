@@ -62,11 +62,11 @@ const AnalyticsPage = () => {
           <Table.Body>
             {loading ? (
               <Table.Row>
-                <Table.Cell colSpan={2}>Loading products...</Table.Cell>
+                <Table.Cell>Loading products...</Table.Cell>
               </Table.Row>
             ) : topProducts.length === 0 ? (
               <Table.Row>
-                <Table.Cell colSpan={2}>No sales data available yet.</Table.Cell>
+                <Table.Cell>No sales data available yet.</Table.Cell>
               </Table.Row>
             ) : (
               topProducts.map((prod, index) => (
@@ -98,11 +98,11 @@ const AnalyticsPage = () => {
           <Table.Body>
             {loading ? (
               <Table.Row>
-                <Table.Cell colSpan={2}>Loading stock data...</Table.Cell>
+                <Table.Cell>Loading stock data...</Table.Cell>
               </Table.Row>
             ) : !lowStockData?.items || lowStockData.items.length === 0 ? (
               <Table.Row>
-                <Table.Cell colSpan={2}>No low stock items found.</Table.Cell>
+                <Table.Cell>No low stock items found.</Table.Cell>
               </Table.Row>
             ) : (
               lowStockData.items.map((item: any, index: number) => (
