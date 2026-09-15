@@ -10,16 +10,33 @@ const AnalyticsPage = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([
-      fetch("/admin/analytics/sales", { credentials: "include" }).then((res) => res.json()),
-      fetch("/admin/analytics/products/top", { credentials: "include" }).then((res) => res.json()),
-      fetch("/admin/analytics/inventory/low-stock", { credentials: "include" }).then((res) => res.json()),
-    ])
-      .then(([sales, products, lowStock]) => {
-        setSalesData(sales)
-        setTopProducts(products?.top_products || [])
-        setLowStockData(lowStock)
-        setLoading(false)
+    // Step 1: get the current store's id first
+    fetch("/admin/stores", { credentials: "include" })
+      .then((res) => res.json())
+      .then((storeRes) => {
+        const store_id = storeRes?.stores?.[0]?.id
+        if (!store_id) {
+          console.error("No store found")
+          setLoading(false)
+          return
+        }
+
+        // Step 2: now call the three analytics endpoints with store_id
+        Promise.all([
+          fetch(`/admin/analytics/sales?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
+          fetch(`/admin/analytics/products/top?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
+          fetch(`/admin/analytics/inventory/low-stock?store_id=${store_id}`, { credentials: "include" }).then((res) => res.json()),
+        ])
+          .then(([sales, products, lowStock]) => {
+            setSalesData(sales)
+            setTopProducts(products?.top_products || [])
+            setLowStockData(lowStock)
+            setLoading(false)
+          })
+          .catch((err) => {
+            console.error(err)
+            setLoading(false)
+          })
       })
       .catch((err) => {
         console.error(err)
@@ -72,7 +89,7 @@ const AnalyticsPage = () => {
               topProducts.map((prod, index) => (
                 <Table.Row key={index}>
                   <Table.Cell>{prod.title}</Table.Cell>
-                  <Table.Cell className="text-right">{prod.total_sold}</Table.Cell>
+                  <Table.Cell className="text-right">{prod.qty}</Table.Cell>
                 </Table.Row>
               ))
             )}

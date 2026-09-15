@@ -1,30 +1,29 @@
-import { 
-  MedusaRequest, 
-  MedusaResponse 
-} from "@medusajs/framework/http"
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { ANALYTICS_MODULE } from "../../../../modules/analytics"
+import AnalyticsModuleService from "../../../../modules/analytics/service"
 
-export async function GET(
-  req: MedusaRequest,
-  res: MedusaResponse
-): Promise<void> {
-  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
-  const { from, to } = req.query
+export async function GET(req: MedusaRequest, res: MedusaResponse): Promise<void> {
+  const analyticsModuleService: AnalyticsModuleService = req.scope.resolve(ANALYTICS_MODULE)
+  const { from, to, store_id } = req.query
+
+  if (!store_id) {
+    res.status(400).json({ success: false, message: "store_id is required" })
+    return
+  }
 
   try {
-    // Fetching orders with summary fields in Medusa v2
-    const { data: orders } = await query.graph({
-      entity: "order",
-      fields: ["id", "created_at", "summary.*"],
-    })
+    const filters: any = { store_id }
 
-    // Calculate total revenue from summary.total and order count
-    const totalRevenue = orders.reduce((sum: number, order: any) => {
-      const orderTotal = order.summary?.total ?? order.total ?? 0
-      return sum + orderTotal
-    }, 0)
-    
-    const ordersCount = orders.length
+    if (from || to) {
+      filters.date = {}
+      if (from) filters.date.$gte = new Date(from as string)
+      if (to) filters.date.$lte = new Date(to as string)
+    }
+
+    const snapshots = await analyticsModuleService.listAnalyticsSnapshots(filters)
+
+    const totalRevenue = snapshots.reduce((sum, s) => sum + (s.revenue || 0), 0)
+    const totalOrders = snapshots.reduce((sum, s) => sum + (s.orders_count || 0), 0)
 
     res.json({
       success: true,
@@ -32,14 +31,11 @@ export async function GET(
       to: to || "present",
       metrics: {
         revenue: totalRevenue,
-        orders_count: ordersCount,
+        orders_count: totalOrders,
       },
-      orders,
+      daily_breakdown: snapshots,
     })
   } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    })
+    res.status(500).json({ success: false, message: error.message })
   }
 }
