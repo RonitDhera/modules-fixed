@@ -26,8 +26,11 @@ export default defineConfig({
       resolve: "./src/modules/inventory-transfer",
     },
     {
-      resolve: "./src/modules/google-integration", // new
+      resolve: "./src/modules/google-integration", // stop
     },
+    {
+  resolve: "./src/modules/analytics",
+},
     {
       resolve: "@medusajs/medusa/file",
       options: {
