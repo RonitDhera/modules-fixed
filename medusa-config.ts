@@ -2,6 +2,9 @@ import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
+const dbUrl = process.env.DATABASE_URL
+const isNeon = dbUrl?.includes("neon.tech") || dbUrl?.includes("sslmode=")
+
 export default defineConfig({
   modules: [
     { resolve: "./src/modules/purchase-order" },
@@ -9,8 +12,8 @@ export default defineConfig({
     { resolve: "./src/modules/analytics" },
   ],
   projectConfig: {
-    databaseUrl: process.env.DATABASE_URL,
-    databaseOptions: process.env.DATABASE_SSL === "true"
+    databaseUrl: dbUrl,
+    databaseOptions: isNeon || process.env.DATABASE_SSL === "true"
       ? { ssl: { rejectUnauthorized: false } }
       : undefined,
     http: {
