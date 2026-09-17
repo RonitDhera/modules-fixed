@@ -2,68 +2,23 @@ import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
-function required(name: string): string {
-  const value = process.env[name]
-
-  if (!value) {
-    if (process.env.NODE_ENV === "production" || process.env.CI) {
-      return process.env[name] || "postgres://dummy:dummy@localhost:5432/dummy"
-    }
-    throw new Error(
-      `Missing required environment variable "${name}". Copy .env.template to .env and fill it in.`
-    )
-  }
-
-  return value
-}
-
 export default defineConfig({
   modules: [
-    {
-      resolve: "./src/modules/purchase-order",
-    },
-    {
-      resolve: "./src/modules/inventory-transfer",
-    },
-    {
-      resolve: "./src/modules/google-integration", // 
-    },
-    {
-  resolve: "./src/modules/analytics",
-},
-    {
-      resolve: "@medusajs/medusa/file",
-      options: {
-        providers: [
-          {
-            resolve: "@medusajs/medusa/file-local",
-            id: "local",
-            options: {
-              backend_url: `${
-                process.env.MEDUSA_BACKEND_URL ||
-                "https://modules-fixed-production.up.railway.app"
-              }/static`,
-            },
-          },
-        ],
-      },
-    },
+    { resolve: "./src/modules/purchase-order" },
+    { resolve: "./src/modules/inventory-transfer" },
+    { resolve: "./src/modules/analytics" },
   ],
-projectConfig: {
-  databaseUrl: process.env.DATABASE_URL || required("DATABASE_URL"),
-  http: {
-    storeCors: process.env.STORE_CORS || "http://localhost:8000",
-    adminCors: process.env.ADMIN_CORS || "http://localhost:9000",
-    authCors: process.env.AUTH_CORS || "http://localhost:9000",
-    jwtSecret: process.env.JWT_SECRET || "supersecret",
-    cookieSecret: process.env.COOKIE_SECRET || "supersecret",
-  },
-},
-  admin: {
-    disable: process.env.DISABLE_ADMIN === "true",
-    path: "/",
-    backendUrl:
-      process.env.MEDUSA_BACKEND_URL ||
-      "https://modules-fixed-production.up.railway.app",
-  },
+  projectConfig: {
+    databaseUrl: process.env.DATABASE_URL,
+    databaseOptions: process.env.DATABASE_SSL === "true"
+      ? { ssl: { rejectUnauthorized: false } }
+      : undefined,
+    http: {
+      storeCors: process.env.STORE_CORS || "http://localhost:8000",
+      adminCors: process.env.ADMIN_CORS || "http://localhost:9000",
+      authCors: process.env.AUTH_CORS || "http://localhost:9000",
+      jwtSecret: process.env.JWT_SECRET || "fallback_jwt_secret",
+      cookieSecret: process.env.COOKIE_SECRET || "fallback_cookie_secret",
+    },
+  } as any,
 })
