@@ -138,7 +138,7 @@ const CreatePurchaseOrderPage = () => {
     }
 
     const data = await res.json()
-    window.location.href = `/purchase-orders/${data.purchase_order.id}`
+    window.location.href = `/app/purchase-orders/${data.purchase_order.id}`
   }
 
   return (

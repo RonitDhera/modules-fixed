@@ -14,7 +14,8 @@ export default async function orderPlacedHandler({
   const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const analyticsModuleService: AnalyticsModuleService = container.resolve(ANALYTICS_MODULE)
 
-  logger.info(`[Analytics] Order placed event received for order id: ${data.id}`)
+
+logger.info(`[Analytics] Order placed event received for order id: ${data.id}`)
 
   // Fetch order details (sales_channel_id, not store_id directly)
   const { data: orders } = await query.graph({

@@ -105,7 +105,7 @@ const PurchaseOrdersPage = () => {
         <Heading level="h1">Purchase Orders</Heading>
         <Button
           size="small"
-          onClick={() => (window.location.href = "/purchase-orders/create")}
+          onClick={() => (window.location.href = "/app/purchase-orders/create")}
         >
           Create
         </Button>
@@ -175,7 +175,7 @@ const PurchaseOrdersPage = () => {
                   key={po.id}
                   className="cursor-pointer"
                   onClick={() => {
-                    window.location.href = `/purchase-orders/${po.id}`
+                    window.location.href = `/app/purchase-orders/${po.id}`
                   }}
                 >
                   <Table.Cell>{po.po_number}</Table.Cell>

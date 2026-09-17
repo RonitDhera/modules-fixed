@@ -31,13 +31,13 @@ export default async function dailyRollupJob(container: MedusaContainer) {
     }
   }
 
-  // Fetch all orders placed yesterday
+  // Fetch all orders placed yesterday with summary fields
   const { data: ordersRaw } = await query.graph({
     entity: "order",
     filters: {
       created_at: { $gte: yesterday, $lte: endOfYesterday },
     },
-    fields: ["id", "total", "sales_channel_id", "items.product_id", "items.quantity", "items.title"],
+    fields: ["id", "total", "sales_channel_id", "summary.*", "items.product_id", "items.quantity", "items.title"],
   })
 
   const orders = ordersRaw as any[]
@@ -55,7 +55,9 @@ export default async function dailyRollupJob(container: MedusaContainer) {
     if (!storeMap[store_id]) {
       storeMap[store_id] = { revenue: 0, orders_count: 0, productCounts: {} }
     }
-    storeMap[store_id].revenue += order.total || 0
+
+    const orderTotal = order.summary?.total ?? order.total ?? 0
+    storeMap[store_id].revenue += orderTotal
     storeMap[store_id].orders_count += 1
 
     for (const item of order.items || []) {
@@ -82,21 +84,21 @@ export default async function dailyRollupJob(container: MedusaContainer) {
     })
 
     if (existing.length > 0) {
-  await analyticsModuleService.updateAnalyticsSnapshots({
-    id: existing[0].id,
-    revenue,
-    orders_count,
-    top_products: topProducts as any,
-  })
-} else {
-  await analyticsModuleService.createAnalyticsSnapshots({
-    store_id,
-    date: yesterday,
-    revenue,
-    orders_count,
-    top_products: topProducts as any,
-  })
-}
+      await analyticsModuleService.updateAnalyticsSnapshots({
+        id: existing[0].id,
+        revenue,
+        orders_count,
+        top_products: topProducts as any,
+      })
+    } else {
+      await analyticsModuleService.createAnalyticsSnapshots({
+        store_id,
+        date: yesterday,
+        revenue,
+        orders_count,
+        top_products: topProducts as any,
+      })
+    }
 
     logger.info(`[Analytics] Rolled up ${store_id}: revenue=${revenue}, orders=${orders_count}`)
   }

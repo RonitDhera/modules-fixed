@@ -106,7 +106,7 @@ const InventoryTransfersPage = () => {
         <Button
           size="small"
           onClick={() =>
-            (window.location.href = "/inventory-transfers/create")
+            (window.location.href = "/app/inventory-transfers/create")
           }
         >
           Create
@@ -193,7 +193,7 @@ const InventoryTransfersPage = () => {
                   key={transfer.id}
                   className="cursor-pointer"
                   onClick={() => {
-                    window.location.href = `/inventory-transfers/${transfer.id}`
+                    window.location.href = `/app/inventory-transfers/${transfer.id}`
                   }}
                 >
                   <Table.Cell>{transfer.transfer_number}</Table.Cell>
